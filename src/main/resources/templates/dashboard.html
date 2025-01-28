@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .dashboard {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        h2 {
+            color: #007BFF;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            width: calc(100% - 22px);
+            margin-right: 10px;
+        }
+        button {
+            background: #007BFF;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #007BFF;
+            color: #fff;
+        }
+        td {
+            background: #fff;
+            border-bottom: 1px solid #ddd;
+        }
+        a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        .actions form {
+            margin: 0;
+        }
+        .logout {
+            margin-top: 20px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="dashboard">
+        <h2>Your Links</h2>
+        <p>Hi, <span th:text="${username}">User</span>!</p> <!-- Display the username -->
+        <form action="#" th:action="@{/shortner/create}" method="post">
+            <input type="text" name="originalUrl" placeholder="Enter URL" required />
+            <button type="submit" class="btn">Shorten</button>
+        </form>
+        <table>
+            <thead>
+            <tr>
+                <th>Short URL</th>
+                <th>Original URL</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="link : ${links}">
+                <td><a th:href="@{'/' + ${link.shortUrl}}" th:text="${link.shortUrl}"></a></td>
+                <td th:text="${link.originalUrl}"></td>
+                <td class="actions">
+                    <form action="#" th:action="@{/shortner/update/{id}(id=${link.id})}" method="post">
+                        <input type="text" name="newUrl" placeholder="New URL" required />
+                        <button type="submit" class="btn">Update</button>
+                    </form>
+                    <form action="#" th:action="@{/shortner/delete/{id}(id=${link.id})}" method="post">
+                        <button type="submit" class="btn">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="logout">
+            <form action="#" th:action="@{/auth/logout}" method="post">
+                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                <button type="submit" class="btn">Logout</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
