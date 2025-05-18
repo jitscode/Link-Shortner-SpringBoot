@@ -1,11 +1,16 @@
 package com.jitstcode.link_shortner_app;
 
+import com.jitstcode.link_shortner_app.Utils.UrlValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 @Service
 public class LinkService {
@@ -14,24 +19,31 @@ public class LinkService {
 
     @Autowired
     private LinkRepository linkRepository;
-
     @Autowired
-    private UserRepository userRepository;
+    private UrlValidator urlValidator;
 
     private final Random random = new Random();
 
     public Link generateShortLink(String originalUrl, User user) {
-        String shortUrl = generateUniqueShortUrl();
-        Link link = new Link(originalUrl, shortUrl, user);
-        return linkRepository.save(link);
+        if(urlValidator.isValidUrl(originalUrl)){
+            String shortUrl = generateUniqueShortUrl();
+            Link link = new Link(originalUrl, shortUrl, user);
+            return linkRepository.save(link);
+        }
+        else {
+            return null;
+        }
+
     }
 
     public void updateLink(Long id, String newUrl) {
-        Optional<Link> optionalLink = linkRepository.findById(id);
-        if (optionalLink.isPresent()) {
-            Link link = optionalLink.get();
-            link.setOriginalUrl(newUrl);
-            linkRepository.save(link);
+        if(urlValidator.isValidUrl(newUrl)) {
+            Optional<Link> optionalLink = linkRepository.findById(id);
+            if (optionalLink.isPresent()) {
+                Link link = optionalLink.get();
+                link.setOriginalUrl(newUrl);
+                linkRepository.save(link);
+            }
         }
     }
 

@@ -48,4 +48,9 @@ public class UserService implements UserDetailsService {
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Set<Role> roles) {
         return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
     }
+
+    // Check if username already exists
+    public boolean isUsernameTaken(String username) {
+        return userRepository.existsByUsername(username);
+    }
 }
